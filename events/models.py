@@ -24,3 +24,16 @@ class Event(models.Model):
     class Meta:
         verbose_name = 'Событие'
         verbose_name_plural = 'События'
+
+# Модель участия
+class Participation(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name='Событие')
+    user_name = models.CharField('Ваше имя', max_length=100)
+    created_at = models.DateTimeField('Создано', auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.user_name} идет на {self.event.title}"
+    
+    class Meta:
+        verbose_name = 'Участие'
+        verbose_name_plural = 'Участники'
