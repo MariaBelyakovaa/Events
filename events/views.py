@@ -2,36 +2,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .models import Event, Participation, Comment
 from django.contrib import messages
+
 def index(request):
-    """Главная страница"""
-    # Получаем все будущие события
-    events = Event.objects.filter(date__gte=timezone.now()).order_by('date')
+    # будущие события
+    future_events = Event.objects.filter(date__gte=timezone.now()).order_by('date')
     
-    # Обработка формы добавления события
-    if request.method == 'POST':
-        title = request.POST.get('title', '').strip()
-        date = request.POST.get('date', '')
-        location = request.POST.get('location', '').strip()
-        category = request.POST.get('category', 'other')
-        description = request.POST.get('description', '').strip()
-        
-        if title and date and location:
-            Event.objects.create(
-                title=title,
-                date=date,
-                location=location,
-                category=category,
-                description=description
-            )
-            return redirect('index')
+    # прошедшие события
+    past_events = Event.objects.filter(date__lt=timezone.now()).order_by('-date')
     
     context = {
-        'events': events[:12],
+        'future_events': future_events[:6],
+        'past_events': past_events[:3],
         'events_count': Event.objects.count(),
-        'today': timezone.now().date(),
     }
     
     return render(request, 'events/index.html', context)
+
 def event_detail(request, event_id):
     
     event = get_object_or_404(Event, id=event_id)
