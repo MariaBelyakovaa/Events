@@ -44,3 +44,17 @@ def event_detail(request, event_id):
     
     event = get_object_or_404(Event, id=event_id)
     return render(request, 'events/detail.html', {'event': event})
+
+def participate(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    
+    if request.method == 'POST':
+        user_name = request.POST.get('user_name', '').strip()
+        
+        if user_name:
+            if not Participation.objects.filter(event=event, user_name=user_name).exists():
+                Participation.objects.create(event=event, user_name=user_name)
+            
+            return redirect('event_detail', event_id=event.id)
+    
+    return redirect('event_detail', event_id=event.id)
