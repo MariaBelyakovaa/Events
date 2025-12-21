@@ -1,0 +1,89 @@
+{% extends 'events/base.html' %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}">Главная</a></li>
+                <li class="breadcrumb-item active">{{ event.title }}</li>
+            </ol>
+        </nav>
+        
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{{ event.title }}</h4>
+                    <span class="badge bg-light text-dark">
+                        {{ event.get_category_display }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p><strong>📅 Дата и время:</strong><br>
+                        {{ event.date|date:"d.m.Y H:i" }}</p>
+                        
+                        <p><strong>📍 Место:</strong><br>
+                        {{ event.location }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>👤 Организатор:</strong><br>
+                        Администрация сайта</p>
+                        
+                        <p><strong>📅 Опубликовано:</strong><br>
+                        {{ event.created_at|date:"d.m.Y" }}</p>
+                    </div>
+                </div>
+                
+                <h5>Описание</h5>
+                <p class="card-text">{{ event.description }}</p>
+                
+                <hr>
+                
+                <div class="mb-4">
+                    <h5>Кто идет? ({{ event.participation_set.count }})</h5>
+                    <form method="post" action="{% url 'participate' event.id %}" class="mb-3">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="user_name"
+                                   placeholder="Введите ваше имя" required>
+                            <button class="btn btn-go" type="submit">
+                                👍 Я пойду!
+                            </button>
+                        </div>
+                    </form>
+                    
+                    {% if event.participation_set.all %}
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for participation in event.participation_set.all %}
+                            <span class="badge bg-success">
+                                {{ participation.user_name }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Пока никто не записался. Будь первым!</p>
+                    {% endif %}
+                </div>
+                
+                <hr>
+                
+                <div>
+                    <h5>💬 Комментарии ({{ event.comment_set.count }})</h5>
+                    <form method="post" action="{% url 'add_comment' event.id %}" class="mb-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" class="form-control mb-2" name="author_name"
+                                   placeholder="Ваше имя" required>
+                            <textarea class="form-control" name="text" rows="3"
+                                      placeholder="Оставьте комментарий..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Отправить</button>
+                    </form>
+                    
+                    {% for comment in event.comment_set.all %}
