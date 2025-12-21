@@ -37,3 +37,17 @@ class Participation(models.Model):
     class Meta:
         verbose_name = 'Участие'
         verbose_name_plural = 'Участники'
+
+# Модель комментария
+class Comment(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name='Событие')
+    author_name = models.CharField('Ваше имя', max_length=100)
+    text = models.TextField('Комментарий')
+    created_at = models.DateTimeField('Создано', auto_now_add=True)
+    
+    def __str__(self):
+        return f"Комментарий от {self.author_name}"
+    
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
