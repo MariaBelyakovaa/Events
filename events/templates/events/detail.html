@@ -1,0 +1,143 @@
+{% extends 'events/base.html' %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}">Главная</a></li>
+                <li class="breadcrumb-item active">{{ event.title|truncatechars:30 }}</li>
+            </ol>
+        </nav>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{{ event.title }}</h4>
+                    <span class="badge bg-light text-dark fs-6">
+                        {{ event.get_category_display }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p class="mb-3">
+                            <strong>📅 Дата и время:</strong><br>
+                            <span class="fs-5">{{ event.date|date:"d E Y года, H:i" }}</span>
+                        </p>
+                        
+                        <p class="mb-3">
+                            <strong>📍 Место:</strong><br>
+                            <span class="fs-5">{{ event.location }}</span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-3">
+                            <strong>👥 Участники:</strong><br>
+                            <span class="fs-5">{{ participants.count }}</span> человек
+                        </p>
+                        
+                        <p class="mb-3">
+                            <strong>📝 Комментарии:</strong><br>
+                            <span class="fs-5">{{ comments.count }}</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <h5>Описание события</h5>
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        {{ event.description|linebreaks }}
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="mb-4">
+                    <h5>👍 Я пойду!</h5>
+                    <form method="post" action="{% url 'participate' event.id %}" class="mb-3">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="user_name" 
+                                   placeholder="Введите ваше имя" required
+                                   maxlength="100">
+                            <button class="btn btn-success" type="submit">
+                                ✅ Записаться
+                            </button>
+                        </div>
+                        <small class="text-muted">Просто введите имя, регистрация не нужна</small>
+                    </form>
+                    
+                    {% if participants %}
+                        <div class="mt-3">
+                            <p class="mb-2">Уже идут:</p>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for participant in participants %}
+                                <span class="badge bg-success p-2">
+                                    👤 {{ participant.user_name }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% else %}
+
+<div class="alert alert-info mt-3">
+                            🎯 Пока никто не записался. Будь первым!
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <hr>
+                
+                <div class="mb-4">
+                    <h5>💬 Комментарии</h5>
+                    <form method="post" action="{% url 'add_comment' event.id %}" class="mb-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" class="form-control mb-2" name="author_name" 
+                                   placeholder="Ваше имя" required maxlength="100">
+                            <textarea class="form-control" name="text" rows="3" 
+                                      placeholder="Оставьте ваш комментарий..." 
+                                      required maxlength="500"></textarea>
+                            <small class="text-muted">Максимум 500 символов</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            📨 Отправить комментарий
+                        </button>
+                    </form>
+                    
+                    {% if comments %}
+                        <div class="mt-4">
+                            {% for comment in comments %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <strong class="fs-6">👤 {{ comment.author_name }}</strong>
+                                        <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+                                    </div>
+                                    <p class="mb-0">{{ comment.text|linebreaks }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            💬 Комментариев пока нет. Оставьте первый!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card-footer text-center">
+                <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+                    ← Вернуться к списку событий
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

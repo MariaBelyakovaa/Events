@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Куда сходить?{% endblock %}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .event-card {
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .event-date {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .btn-go {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        .btn-go:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <header class="mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4">🎉 Куда сходить?</h1>
+                    <p class="lead">Находи интересные события в твоем городе</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="/admin/" class="btn btn-outline-primary">Админка</a>
+                </div>
+            </div>
+            <hr>
+        </header>
+
+        
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        
+        <footer class="mt-5 pt-3 border-top text-center text-muted">
+            <p>© 2023 "Куда сходить?" — проект на Django</p>
+        </footer>
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
